@@ -1,12 +1,12 @@
 const { json } = require("express")
 const User = require("../Models/AuthRegModel")
 const bcrypt =require ('bcrypt')
-
+const cookieParser = require("cookie-parser");
 const dotenv = require('dotenv')
 require('dotenv').config()
 const jwt =require( 'jsonwebtoken')
 
- 
+
 
 
 module.exports.AuthController=async(req,res)=>{
@@ -62,10 +62,16 @@ module.exports.loginController=async(req,res)=>{
         }
 
         const token= jwt.sign({UserID:finduser._id},jwtSecretkey,{
-            expiresIn:'1h'
+            expiresIn:'30m'
         })
+        res.cookie('jwt',token,{
+            httpOnly:true,
+            secure: false,
+            sameSite:"Strict",
+        
+        })
+        res.status(200).json({ message: "User logged in" ,user:finduser});
 
-        res.status(200).json({ message: "User logged in" ,token,user:finduser});
 
     } catch (error) {
         
@@ -75,4 +81,16 @@ module.exports.loginController=async(req,res)=>{
     }
    
 
+}
+
+exports.logoutController=(req,res)=>{
+    
+      
+        res.clearCookie("jwt", {
+          httpOnly: true,  
+          secure:false,   
+          sameSite: "Strict",
+        });
+        res.json({ message: "Logged out successfully" });
+      
 }

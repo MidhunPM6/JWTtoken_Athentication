@@ -4,7 +4,7 @@ import axios from 'axios'
 import { Authcontext } from '../../ContextAPI/AuthContext'
 import { JWTtokenCon } from '../../ContextAPI/JWTcontext'
 
-
+axios.defaults.withCredentials = true;
 
 
 
@@ -35,13 +35,11 @@ const Login = () => {
     const handleSubmit=async(e)=>{
       e.preventDefault()
       try {
-        const response = await axios.post('http://localhost:5000/api/auth/login',formData)
+        const response = await axios.post('http://localhost:5000/api/auth/login',formData,{ withCredentials: true })
         setUser(response.data.user)  
-        setJWTtoken(response.data.token)  
+       
         alert(response.data.message)
-        
-        
-         console.log(JWTtoken);
+         console.log(response.data);
         //  console.log(response.data.user.name)
        
          navigate('/main')

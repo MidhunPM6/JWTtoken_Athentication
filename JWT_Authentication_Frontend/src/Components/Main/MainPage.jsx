@@ -1,17 +1,32 @@
 import React, { useContext, useEffect } from 'react'
 import { Authcontext } from '../../ContextAPI/AuthContext'
 import { JWTtokenCon } from '../../ContextAPI/JWTcontext'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+axios.defaults.withCredentials = true;
 
 
 
 
 const MainPage = () => {
-    const {user}=useContext(Authcontext)
+    const {setUser,user}=useContext(Authcontext)
     const {setJWTtoken,JWTtoken}=useContext(JWTtokenCon)
 
-    const handleLogout=()=>{
+    const navigate=useNavigate()
+
+    const handleLogout=async()=>{
        
-        console.log(JWTtoken)
+      try {
+        const response = await axios.post('http://localhost:5000/api/auth/logout',{withCredentials: true})
+        console.log(response.data.message)
+        setUser(null)
+        localStorage.removeItem('user')
+        navigate('/')
+      } catch (error) {
+        console.log(error);
+        alert('Something  went wrong')
+        
+      }
     }
 
     useEffect(()=>{
