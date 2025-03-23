@@ -20,10 +20,6 @@ const SignUp = () => {
     const handleSubmit=async(e)=>{
         console.log(formData)  
         e.preventDefault()
-<<<<<<< HEAD
-        console.log(formData)  
-=======
->>>>>>> f77eff3 (GoogleCloud Integrated)
         try{
             const response=await axios.post('http://localhost:5000/api/auth/register',formData)
             

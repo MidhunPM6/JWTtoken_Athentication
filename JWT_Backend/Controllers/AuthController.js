@@ -1,26 +1,15 @@
-<<<<<<< HEAD
-const { json } = require("express")
-const User = require("../Models/AuthRegModel")
-const bcrypt =require ('bcrypt')
-const cookieParser = require("cookie-parser");
-=======
 const { json } = require('express')
 const User = require('../Models/AuthRegModel')
 const bcrypt = require('bcrypt')
 const cookieParser = require('cookie-parser')
->>>>>>> f77eff3 (GoogleCloud Integrated)
 const dotenv = require('dotenv')
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const { format } = require('util')
 const { Storage } = require('@google-cloud/storage')
 
-<<<<<<< HEAD
-
-=======
 module.exports.AuthController = async (req, res) => {
   const { name, email, password } = req.body
->>>>>>> f77eff3 (GoogleCloud Integrated)
 
   const existingUser = await User.findOne({ email: email })
 
@@ -82,11 +71,9 @@ const bucket = storage.bucket(
   'workbridgeproject-seekers-profile-pictures-workbridge'
 )
 
-<<<<<<< HEAD
-        const token= jwt.sign({UserID:finduser._id},jwtSecretkey,{
-            expiresIn:'30m'
-=======
-exports.submitController = (req, res) => {
+exports.submitController =async (req, res) => {
+  const {userid}=req.body
+  console.log(userid)
   try {
     console.log('Received file:', req.file)
 
@@ -94,12 +81,12 @@ exports.submitController = (req, res) => {
       return res.status(400).json({ message: 'No file uploaded!' })
     }
 
-    const blob = bucket.file(req.file.originalname)
+    const blob = bucket.file(req.file.originalname+userid)
     const blobStream = blob.createWriteStream({
       resumable: false
     })
 
-    blobStream.on('error', err => {
+    blobStream.on('error', err => { 
       console.error('Upload error:', err)
       return res.status(500).json({ message: err.message })
     })
@@ -109,22 +96,31 @@ exports.submitController = (req, res) => {
         const [url] = await blob.getSignedUrl({
           action: 'read',
           expires: Date.now() + 60 * 60 * 1000
->>>>>>> f77eff3 (GoogleCloud Integrated)
         })
-        res.cookie('jwt',token,{
-            httpOnly:true,
-            secure: false,
-            sameSite:"Strict",
-        
-        })
-        res.status(200).json({ message: "User logged in" ,user:finduser});
+      
+      
 
-<<<<<<< HEAD
-=======
+        const updatedUser = await User.findByIdAndUpdate(
+          userid,
+          { ProfilePic: url }, // Update field
+          { new: true, runValidators: true } // Returns updated document
+        );
+
+        if (!updatedUser) {
+          console.error('User not found in DB');
+          return res.status(404).json({ message: 'User not found!' });
+        }
+
+        console.log('Updated User:', updatedUser);
+       
+      
+         
         return res.status(200).json({
           message: `File uploaded successfully`,
           url: url
         })
+       
+
       } catch (err) {
         console.error('Failed to generate signed URL:', err)
         return res.status(500).json({
@@ -132,8 +128,8 @@ exports.submitController = (req, res) => {
           error: err.message
         })
       }
-    })
->>>>>>> f77eff3 (GoogleCloud Integrated)
+  })
+   
 
     blobStream.end(req.file.buffer)
   } catch (err) {
@@ -142,21 +138,6 @@ exports.submitController = (req, res) => {
   }
 }
 
-<<<<<<< HEAD
-}
-
-exports.logoutController=(req,res)=>{
-    
-      
-        res.clearCookie("jwt", {
-          httpOnly: true,  
-          secure:false,   
-          sameSite: "Strict",
-        });
-        res.json({ message: "Logged out successfully" });
-      
-}
-=======
 exports.logoutController = (req, res) => {
   res.clearCookie('jwt', {
     httpOnly: true,
@@ -165,4 +146,3 @@ exports.logoutController = (req, res) => {
   })
   res.json({ message: 'Logged out successfully' })
 }
->>>>>>> f77eff3 (GoogleCloud Integrated)

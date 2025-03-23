@@ -14,6 +14,9 @@ const AuthSchema=new mongoose.Schema({
     password : {
          type:String,
          required:true
+    },
+    urlprofile : {
+     type:String,
     }
 })
 const User = mongoose.model('User', AuthSchema)

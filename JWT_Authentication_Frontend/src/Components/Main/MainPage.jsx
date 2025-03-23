@@ -3,15 +3,16 @@ import { Authcontext } from '../../ContextAPI/AuthContext'
 import { JWTtokenCon } from '../../ContextAPI/JWTcontext'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-<<<<<<< HEAD
 axios.defaults.withCredentials = true;
 
 
 
 
 const MainPage = () => {
-    const {setUser,user}=useContext(Authcontext)
-    const {setJWTtoken,JWTtoken}=useContext(JWTtokenCon)
+    const {user,setUser}=useContext(Authcontext)
+  
+    const [file ,setFile]=useState('')
+    
 
     const navigate=useNavigate()
 
@@ -28,67 +29,41 @@ const MainPage = () => {
         alert('Something  went wrong')
         
       }
-=======
-axios.defaults.withCredentials = true
-
-const MainPage = () => {
-  const { setUser, user } = useContext(Authcontext)
-  const { setJWTtoken, JWTtoken } = useContext(JWTtokenCon)
-
-  const [file, setFile] = useState('')
-
-  const formData=new FormData()
-  formData.append('file',file)
-
-  const navigate = useNavigate()
-
-  const handleLogout = async () => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/auth/logout'
-        ,{ withCredentials: true }
-      )
-      console.log(response.data.message)
-      setUser(null)
-      localStorage.removeItem('user')
-      navigate('/')
-    } catch (error) {
-      console.log(error)
-      alert('Something  went wrong')
->>>>>>> f77eff3 (GoogleCloud Integrated)
     }
-  }
-
-  useEffect(() => {
-    console.log(user)
-  }, [user])
-
-  const handleSubmit = async() => {
-
-
-    if (!file) {
-      alert("Please select a file first!");
-      return;
-  } 
-
-  try {
-    console.log(file)
-   const formData=new FormData()
-   formData.append('file',file)
-     const res = await axios.post('http://localhost:5000/api/auth/submit',formData,{
-      headers: {
-        "Content-Type": "multipart/form-data",
-    },
-     })
-     console.log(res)
-  } catch (error) {
     
-  }
-   
-
-   
-
-    console.log(formData)
-  }
+    useEffect(() => {
+      console.log(user._id)
+    }, [user])
+    
+    const handleSubmit = async() => {
+      
+      
+      if (!file) {
+        alert("Please select a file first!");
+        return;
+      } 
+      if (file.size > 1 * 1024 * 1024) { 
+        alert('File size must be less than 1MB');
+        return;
+      }
+      
+      try {
+        console.log(file)
+        const formData=new FormData()
+        formData.append('file',file)
+        formData.append('userid',user._id)
+        const res = await axios.post('http://localhost:5000/api/auth/submit',formData,{
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        console.log(res)
+      } catch (error) {
+        
+      }
+      
+      
+    }
   return (
     <>
       <div className='flex justify-center md:pt-56 pt-20'>
