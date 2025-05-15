@@ -26,7 +26,7 @@ module.exports.AuthController = async (req, res) => {
     })
     await user.save()
 
-    res.status(200).json({ message: 'Successfully SignIn' })
+    res.status(200).json({ message: 'Successfully SignIn done' })
   } catch (error) {
     console.log(error)
     res.status(400).json({ message: 'Server Error' })
